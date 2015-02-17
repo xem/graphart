@@ -1,13 +1,11 @@
-<button onclick="changegraph(0)">Height</button>
-<button onclick="changegraph(1)">Width</button>
-<button onclick="changegraph(2)">Y</button>
-<button onclick="changegraph(3)">X</button>
+<button onclick="changegraph(0)" style="border:2px solid red">Height</button>
+<button onclick="changegraph(1)" style="border:2px solid blue">Width</button>
+<button onclick="changegraph(2)" style="border:2px solid orange">Y</button>
+<button onclick="changegraph(3)" style="border:2px solid purple">X</button>
 
-<div id=container>
-lol
-</div>
+<div id=container></div>
 
-<div id=code><pre>code will appear here here, and preview on the right</pre></div>
+<textarea id=code>code will appear here here, and preview on the right</textarea>
 
 <iframe id=result>preview goes here</iframe>
 
@@ -18,6 +16,8 @@ lol
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   overflow: auto;
+  user-select: none;
+  -moz-user-select: none;
 }
 
 button {
@@ -96,12 +96,12 @@ for(i = 0; i < 200; i++){
   html += '<td height=330 onmousemove="editgraph(event.pageY,'+i+')">\
   <div style="position:absolute;width:20px;height:2px;background:red;bottom:0px;" id=g_0_'+i+'></div>\
   <div style="position:absolute;width:20px;height:2px;background:blue;bottom:0px" id=g_1_'+i+'></div>\
-  <div style="position:absolute;width:20px;height:2px;background:green;bottom:0px" id=g_2_'+i+'></div>\
+  <div style="position:absolute;width:20px;height:2px;background:orange;bottom:0px" id=g_2_'+i+'></div>\
   <div style="position:absolute;width:20px;height:2px;background:purple;bottom:0px" id=g_3_'+i+'></div></td>';
 }
 html += "<tr>";
 for(i = 0; i < 200; i++){
-  html += "<th height=50><input type=color></th>";
+  html += "<th height=50><input type=color onchange=all_c["+i+"]=value;updatecode()></th>";
 }
 container.innerHTML = html;
 
@@ -120,9 +120,16 @@ changegraph = function(n){
   }
 };
 
+all_x =[];
+all_y =[];
+all_w =[];
+all_h =[];
+all_c =[];
+
 editgraph = function(Y, point){
   if(currentgraph >= 0 && clicking){
     window["g_" + currentgraph + "_" + point].style.bottom = 360 - Y + "px";
+    [all_h, all_w, all_y, all_x][currentgraph][point] = +Math.round((360 - Y) / 360 * 100);
   }
 }
 
@@ -132,7 +139,21 @@ onmousedown = function(){
   clicking = true;
 }
 
-onmouseup = function(){
+onmouseup = onclick = function(){
   clicking = false;
+  updatecode();
+}
+
+updatecode = function(){
+  precode = ""
+  for(i = 0; i < 200; i++){
+    x = all_x[i] || 0;
+    y = all_y[i] || 0;
+    w = all_w[i] || 0;
+    h = all_h[i] || 0;
+    c = all_c[i] || "black";
+    precode += "<div style='position:absolute;left:"+x+"vw;top:"+y+"vh;width:"+w+"vw;height:"+h+"vh;background:"+c+"'></div>\n";
+  }
+  code.innerHTML = result.srcdoc = precode;
 }
 </script>
