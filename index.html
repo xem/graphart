@@ -1,7 +1,7 @@
-<button>Height</button>
-<button>Width</button>
-<button>Y</button>
-<button>X</button>
+<button onclick="changegraph(0)">Height</button>
+<button onclick="changegraph(1)">Width</button>
+<button onclick="changegraph(2)">Y</button>
+<button onclick="changegraph(3)">X</button>
 
 <div id=container>
 lol
@@ -24,6 +24,11 @@ button {
   padding: 2px;
   margin: 2px;
   float: right;
+}
+
+button.selected {
+  background: black;
+  color: white;
 }
 
 input {
@@ -57,8 +62,8 @@ td {
   border: 1px solid black;
   vertical-align: bottom;
   position: relative;
-  width: 22px;
-  min-width: 16px;
+  width: 20px;
+  min-width: 20px;
 }
 
 th {
@@ -88,15 +93,46 @@ th {
 
 html = "<table><tr>";
 for(i = 0; i < 200; i++){
-  html += "<td height=330><div style='position:absolute;width:15px;height:2px;background:red;bottom:"+(10 + Math.random() * 50)+
-          "px;'></div><div style='position:absolute;width:15px;height:2px;background:blue;bottom:"+(100 + Math.random() * 50)+
-          "px;'></div><div style='position:absolute;width:15px;height:2px;background:green;bottom:"+(150 + Math.random() * 50)+
-          "px;'></div><div style='position:absolute;width:15px;height:2px;background:purple;bottom:"+(250 + Math.random() * 50)+
-          "px;'></div></td>";
+  html += '<td height=330 onmousemove="editgraph(event.pageY,'+i+')">\
+  <div style="position:absolute;width:20px;height:2px;background:red;bottom:0px;" id=g_0_'+i+'></div>\
+  <div style="position:absolute;width:20px;height:2px;background:blue;bottom:0px" id=g_1_'+i+'></div>\
+  <div style="position:absolute;width:20px;height:2px;background:green;bottom:0px" id=g_2_'+i+'></div>\
+  <div style="position:absolute;width:20px;height:2px;background:purple;bottom:0px" id=g_3_'+i+'></div></td>';
 }
 html += "<tr>";
 for(i = 0; i < 200; i++){
   html += "<th height=50><input type=color></th>";
 }
 container.innerHTML = html;
+
+currentgraph = -1;
+
+changegraph = function(n){
+  currentgraph = n;
+  buttons = document.querySelectorAll("button");
+  for(i in buttons){
+    if(i == n){
+      buttons[i].className = "selected";
+    }
+    else{
+      buttons[i].className = "";
+    }
+  }
+};
+
+editgraph = function(Y, point){
+  if(currentgraph >= 0 && clicking){
+    window["g_" + currentgraph + "_" + point].style.bottom = 360 - Y + "px";
+  }
+}
+
+clicking = false;
+
+onmousedown = function(){
+  clicking = true;
+}
+
+onmouseup = function(){
+  clicking = false;
+}
 </script>
