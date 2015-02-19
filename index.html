@@ -1,7 +1,12 @@
-<button onclick="changegraph(0)" style="border:2px solid red">Height</button>
-<button onclick="changegraph(1)" style="border:2px solid blue">Width</button>
-<button onclick="changegraph(2)" style="border:2px solid orange">Y</button>
-<button onclick="changegraph(3)" style="border:2px solid purple">X</button>
+<button onclick="changegraph(0)" style="border:2px solid blue">B</button>
+<button onclick="changegraph(1)" style="border:2px solid lightgreen">G</button>
+<button onclick="changegraph(2)" style="border:2px solid red">R</button>
+<label>bottom graph: </label>
+<button onclick="changegraph(3)" style="border:2px solid pink">Height</button>
+<button onclick="changegraph(4)" style="border:2px solid gold">Width</button>
+<button onclick="changegraph(5)" style="border:2px solid orange">Y</button>
+<button onclick="changegraph(6)" style="border:2px solid purple" class=selected>X</button>
+<label>top graph: </label>
 
 <div id=container></div>
 
@@ -24,6 +29,11 @@ button {
   padding: 2px;
   margin: 2px;
   float: right;
+}
+
+label {
+  float: right;
+  padding: 5px 20px;
 }
 
 button.selected {
@@ -93,19 +103,22 @@ th {
 
 html = "<table><tr>";
 for(i = 0; i < 200; i++){
-  html += '<td height=330 onmousemove="editgraph(event.pageY,'+i+')">\
-  <div style="position:absolute;width:20px;height:2px;background:red;bottom:0px;" id=g_0_'+i+'></div>\
-  <div style="position:absolute;width:20px;height:2px;background:blue;bottom:0px" id=g_1_'+i+'></div>\
-  <div style="position:absolute;width:20px;height:2px;background:orange;bottom:0px" id=g_2_'+i+'></div>\
-  <div style="position:absolute;width:20px;height:2px;background:purple;bottom:0px" id=g_3_'+i+'></div></td>';
+  html += '<td height=200 onmousemove="editgraph(event.pageY,'+i+')">\
+  <div style="position:absolute;width:20px;height:2px;background:purple;bottom:0px;" id=g_6_'+i+'></div>\
+  <div style="position:absolute;width:20px;height:2px;background:orange;bottom:0px" id=g_5_'+i+'></div>\
+  <div style="position:absolute;width:20px;height:2px;background:gold;bottom:0px" id=g_4_'+i+'></div>\
+  <div style="position:absolute;width:20px;height:2px;background:pink;bottom:0px" id=g_3_'+i+'></div></td>';
 }
 html += "<tr>";
 for(i = 0; i < 200; i++){
-  html += "<th height=50><input type=color onchange=all_c["+i+"]=value;updatecode()></th>";
+  html += '<td height=200 onmousemove="editgraph2(event.pageY,'+i+')">\
+  <div style="position:absolute;width:20px;height:2px;background:red;bottom:0px;" id=g_2_'+i+'></div>\
+  <div style="position:absolute;width:20px;height:2px;background:lightgreen;bottom:0px" id=g_1_'+i+'></div>\
+  <div style="position:absolute;width:20px;height:2px;background:blue;bottom:0px" id=g_0_'+i+'></div></td>';
 }
 container.innerHTML = html;
 
-currentgraph = -1;
+currentgraph = 6;
 
 changegraph = function(n){
   currentgraph = n;
@@ -125,11 +138,21 @@ all_y =[];
 all_w =[];
 all_h =[];
 all_c =[];
+all_r =[];
+all_g =[];
+all_b =[];
 
 editgraph = function(Y, point){
   if(currentgraph >= 0 && clicking){
-    window["g_" + currentgraph + "_" + point].style.bottom = 360 - Y + "px";
-    [all_h, all_w, all_y, all_x][currentgraph][point] = +Math.round((360 - Y) / 360 * 100);
+    window["g_" + currentgraph + "_" + point].style.bottom = 230 - Y + "px";
+    [[],[],[], all_h, all_w, all_y, all_x][currentgraph][point] = +Math.round((230 - Y) / 200 * 100);
+  }
+}
+
+editgraph2 = function(Y, point){
+  if(currentgraph >= 0 && clicking){
+    window["g_" + currentgraph + "_" + point].style.bottom = 430 - Y + "px";
+    [all_b, all_g, all_r,[],[],[],[]][currentgraph][point] = +Math.round((430 - Y) / 200 * 100);
   }
 }
 
@@ -144,15 +167,17 @@ onmouseup = onclick = function(){
   updatecode();
 }
 
-updatecode = function(){
+onload = updatecode = function(){
   precode = ""
   for(i = 0; i < 200; i++){
     x = all_x[i] || 0;
     y = all_y[i] || 0;
     w = all_w[i] || 0;
     h = all_h[i] || 0;
-    c = all_c[i] || "black";
-    precode += "<div style='position:absolute;left:"+x+"vw;top:"+y+"vh;width:"+w+"vw;height:"+h+"vh;background:"+c+"'></div>\n";
+    r = all_r[i] || 0;
+    g = all_g[i] || 0;
+    b = all_b[i] || 0;
+    precode += "<div style='position:absolute;left:"+x+"vw;top:"+y+"vh;width:"+w+"vw;height:"+h+"vh;background:rgb("+r+","+g+","+b+")'></div>\n";
   }
   code.innerHTML = result.srcdoc = precode;
 }
